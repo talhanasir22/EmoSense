@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "760903643072",
+    "project_id": "emosense-4f21e",
+    "storage_bucket": "emosense-4f21e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:760903643072:android:b336651b0559bb1c5aa225",
+        "android_client_info": {
+          "package_name": "com.emo_sense.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCB6aUFeQwSuqwlQ8U8otlwXLxOs_uq2OY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
