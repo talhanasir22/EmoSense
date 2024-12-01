@@ -1,12 +1,13 @@
-import 'package:emo_sense/forgotpassword_page.dart';
-import 'package:emo_sense/home_page.dart';
-import 'package:emo_sense/primary_btn.dart';
-import 'package:emo_sense/signup_page.dart';
+import 'package:emo_sense/Pages/signup_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-import 'auth_page.dart';
+import '../Custom Widgets/primary_btn.dart';
+import '../Firebase/auth.dart';
+import 'forgotpassword_page.dart';
+import 'home_page.dart';
+
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -15,11 +16,12 @@ class SignInPage extends StatefulWidget {
   State<SignInPage> createState() => _SignInPageState();
 }
 class _SignInPageState extends State<SignInPage> {
-  final AuthPage _auth = AuthPage();
+  final _auth = Auth();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   bool _isObscured = true;
   bool _isLoading = false;
+
 
   void showErrortoast(String message) {
     Fluttertoast.showToast(
@@ -57,7 +59,7 @@ class _SignInPageState extends State<SignInPage> {
                       const SizedBox(height: 50),
                       const CircleAvatar(
                         backgroundImage: AssetImage('assets/Images/Logo.png'),
-                        radius: 100,
+                        radius: 80,
                       ),
                       const SizedBox(height: 20),
                       const Text(
@@ -94,6 +96,13 @@ class _SignInPageState extends State<SignInPage> {
                                 height: 50,
                                 width: 320,
                                 child: TextField(
+                                  onTap: (){
+                                    if (_isLoading) {
+                                      setState(() {
+                                        _isLoading = false;
+                                      });
+                                    }
+                                  },
                                   controller: emailController,
                                   decoration: InputDecoration(
                                     filled: true,
@@ -111,6 +120,13 @@ class _SignInPageState extends State<SignInPage> {
                                 height: 50,
                                 width: 320,
                                 child: TextField(
+                                  onTap: (){
+                                    if (_isLoading) {
+                                      setState(() {
+                                        _isLoading = false;
+                                      });
+                                    }
+                                  },
                                   controller: passwordController,
                                   obscureText: _isObscured,
                                   decoration: InputDecoration(
@@ -121,9 +137,16 @@ class _SignInPageState extends State<SignInPage> {
                                     ),
                                     suffixIcon: IconButton(
                                       onPressed: () {
-                                        setState(() {
-                                          _isObscured = !_isObscured;
-                                        });
+                                        if(_isLoading){
+                                          setState(() {
+                                            _isLoading = false;
+                                          });
+                                        }
+                                        else{
+                                          setState(() {
+                                            _isObscured = !_isObscured;
+                                          });
+                                        }
                                       },
                                       icon: _isObscured
                                           ? const Icon(Icons.visibility, size: 20)
@@ -141,6 +164,11 @@ class _SignInPageState extends State<SignInPage> {
                                     padding: const EdgeInsets.only(right: 10.0),
                                     child: TextButton(
                                       onPressed: () {
+                                        if(_isLoading){
+                                          setState(() {
+                                            _isLoading = false;
+                                          });
+                                        }
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -164,11 +192,19 @@ class _SignInPageState extends State<SignInPage> {
                                 colors: Colors.white,
                                 textColor: Colors.black,
                                 onPress: () {
+                                  FocusScope.of(context).unfocus();
                                   if(emailController.text.isEmpty || passwordController.text.isEmpty){
                                     showErrortoast("Please fill all the fields");
                                   }
                                   else{
-                                    _signin();
+                                    if(_isLoading){
+                                      setState(() {
+                                        _isLoading = false;
+                                      });
+                                    }
+                                    else{
+                                      _signin();
+                                    }
                                   }
                                 },
                               ),
@@ -177,6 +213,11 @@ class _SignInPageState extends State<SignInPage> {
                                 onPressed: () {
                                   emailController.clear();
                                   passwordController.clear();
+                                  if(_isLoading){
+                                    setState(() {
+                                      _isLoading = false;
+                                    });
+                                  }
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(

@@ -1,7 +1,7 @@
-import 'package:emo_sense/auth_page.dart';
-import 'package:emo_sense/primary_btn.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import '../Custom Widgets/primary_btn.dart';
+import '../Firebase/auth.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -11,7 +11,7 @@ class ForgotPasswordPage extends StatefulWidget {
 }
 
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
-  final _auth = AuthPage();
+  final _auth = Auth();
   final _emailController = TextEditingController();
   bool _isLoading = false;
   @override
@@ -33,6 +33,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           ),
           leading: IconButton(
             onPressed: () {
+              FocusScope.of(context).unfocus();
               Navigator.pop(context);
             },
             icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
@@ -55,6 +56,13 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                       width: 320,
                       height: 50,
                       child: TextField(
+                        onTap: (){
+                          if(_isLoading){
+                            setState(() {
+                              _isLoading = false;
+                            });
+                          }
+                        },
                         controller: _emailController,
                         decoration: InputDecoration(
                           hintText: 'Enter your email here',
@@ -72,6 +80,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     colors: Colors.deepPurpleAccent,
                     textColor: Colors.white,
                     onPress: () async {
+                      FocusScope.of(context).unfocus();
                       final email = _emailController.text.trim();
                       if (email.isEmpty) {
                         Fluttertoast.showToast(

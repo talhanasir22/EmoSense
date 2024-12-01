@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class AuthPage{
+class Auth{
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<User?> signupwithemail(String email, String password) async {

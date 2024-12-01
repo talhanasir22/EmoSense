@@ -1,8 +1,9 @@
-import 'package:emo_sense/auth_page.dart';
-import 'package:emo_sense/primary_btn.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
+import '../Custom Widgets/primary_btn.dart';
+import '../Firebase/auth.dart';
 
 class SignUpPage extends StatefulWidget{
   const SignUpPage({super.key});
@@ -12,7 +13,7 @@ class SignUpPage extends StatefulWidget{
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  final AuthPage _auth = AuthPage();
+  final _auth = Auth();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -78,7 +79,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     const SizedBox(height: 25),
                     const CircleAvatar(
                       backgroundImage: AssetImage('assets/Images/Logo.png'),
-                      radius: 100,
+                      radius: 80,
                     ),
                     const SizedBox(height: 20),
                     SizedBox(
@@ -96,7 +97,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               const Padding(
                                 padding: EdgeInsets.only(top: 10.0),
                                 child: Text(
-                                  'Create New \n   Account',
+                                  'Create New Account',
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 32),
@@ -107,6 +108,13 @@ class _SignUpPageState extends State<SignUpPage> {
                                 height: 50,
                                 width: 320, // Set a fixed width for the text field
                                 child: TextField(
+                                  onTap: (){
+                                    if(_isLoading){
+                                      setState(() {
+                                        _isLoading = false;
+                                      });
+                                    }
+                                  },
                                   controller: _nameController,
                                   decoration: InputDecoration(
                                     filled: true,
@@ -124,6 +132,13 @@ class _SignUpPageState extends State<SignUpPage> {
                                 height: 50,
                                 width: 320, // Set a fixed width for the text field
                                 child: TextFormField(
+                                    onTap: (){
+                                      if(_isLoading){
+                                        setState(() {
+                                          _isLoading = false;
+                                        });
+                                      }
+                                    },
                                   controller: _emailController,
                                   decoration: InputDecoration(
                                     filled: true,
@@ -142,6 +157,13 @@ class _SignUpPageState extends State<SignUpPage> {
                                 height: 50,
                                 width: 320, // Set a fixed width for the text field
                                 child: TextField(
+                                  onTap: (){
+                                    if(_isLoading){
+                                      setState(() {
+                                        _isLoading = false;
+                                      });
+                                    }
+                                  },
                                   controller: _passwordController,
                                   decoration: InputDecoration(
                                     filled: true,
@@ -160,10 +182,16 @@ class _SignUpPageState extends State<SignUpPage> {
                                 height: 50,
                                 width: 320, // Set a fixed width for the text field
                                 child: TextFormField(
+                                  onTap: (){
+                                    if(_isLoading){
+                                      setState(() {
+                                        _isLoading = false;
+                                      });
+                                    }
+                                  },
                                   controller: _confirmPasswordController,
                                   decoration: InputDecoration(
                                     filled: true,
-
                                     fillColor: Colors.white,
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10.0),
@@ -185,6 +213,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                 colors: Colors.white,
                                 textColor: Colors.black,
                                 onPress: () {
+                                  FocusScope.of(context).unfocus();
                                   if (_nameController.text.isEmpty ||
                                       _emailController.text.isEmpty ||
                                       _passwordController.text.isEmpty ||
@@ -198,14 +227,29 @@ class _SignUpPageState extends State<SignUpPage> {
                                     showErrortoast('Password and confirm password do not match.');
                                   }
                                   else {
-                                    _signUp();
+                                    if(_isLoading){
+                                      setState(() {
+                                        _isLoading = false;
+                                      });
+                                    }
+                                    else{
+                                      _signUp();
+                                    }
                                   }
                                 },
                               ),
                               const SizedBox(height: 1),
                               TextButton(
                                 onPressed: (){
-                                  Navigator.pop(context);
+                                  FocusScope.of(context).unfocus();
+                                  if(_isLoading){
+                                    setState(() {
+                                      _isLoading = false;
+                                    });
+                                  }
+                                  else{
+                                    Navigator.pop(context);
+                                  }
                                 },
                                 child: const Text(
                                   'Already Registered? SignIn',
@@ -243,10 +287,8 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
   void _signUp() async {
-    String name = _nameController.text;
     String email = _emailController.text;
     String password = _passwordController.text;
-    String confirmPassword = _confirmPasswordController.text;
 
     setState(() {
       _isLoading = true; // Update the state to show the progress indicator

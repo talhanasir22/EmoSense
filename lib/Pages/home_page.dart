@@ -1,7 +1,8 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:emo_sense/primary_container.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
+import '../Custom Widgets/primary_container.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});

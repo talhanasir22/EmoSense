@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:emo_sense/signin_page.dart';
+import 'package:emo_sense/Pages/signin_page.dart';
 import 'package:flutter/material.dart';
 
 class SplashPage extends StatefulWidget{
