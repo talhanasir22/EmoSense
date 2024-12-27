@@ -68,70 +68,60 @@ class _SignUpPageState extends State<SignUpPage> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
+        backgroundColor: Colors.black87,
         body: Stack(
           children: [
             Opacity(
               opacity: _isLoading ? 0.5 : 1.0,
-              child: Center(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    const SizedBox(height: 25),
-                    const CircleAvatar(
-                      backgroundImage: AssetImage('assets/Images/Logo.png'),
-                      radius: 80,
+              child: Stack(
+                children: [
+                  Positioned(
+                    left: 140,
+                    right: 0,
+                    top: -20,
+                    child: SizedBox(
+                      height: 300,
+                      child: Image.asset('assets/Images/loginImg.png'),
                     ),
-                    const SizedBox(height: 20),
-                    SizedBox(
-                      height: 500,
-                      child: Container(
-                        height: double.infinity, // Fixed height
-                        width: double.infinity, // Full width of the screen
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(25),
-                          color: Colors.deepPurpleAccent,
-                        ),
-                        child: Center(
-                          child: Column(
-                            children: [
-                              const Padding(
-                                padding: EdgeInsets.only(top: 10.0),
-                                child: Text(
-                                  'Create New Account',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 32),
-                                ),
-                              ),
-                              const SizedBox(height:20 ,),
-                              SizedBox(
-                                height: 50,
-                                width: 320, // Set a fixed width for the text field
-                                child: TextField(
-                                  onTap: (){
-                                    if(_isLoading){
-                                      setState(() {
-                                        _isLoading = false;
-                                      });
-                                    }
-                                  },
-                                  controller: _nameController,
-                                  decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor: Colors.white,
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                    hintText: 'Name',
-                                    hintStyle: const TextStyle(color: Colors.black45),
+                  ),
+                  SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      SizedBox(height: 220,),
+                      SizedBox(
+                        height: 500,
+                        child: Container(
+                          height: double.infinity, // Fixed height
+                          width: double.infinity, // Full width of the screen
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(40),
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.purple.shade300, // Purple color
+                                Colors.black12,    // Dark grey color
+                              ],
+                              begin: Alignment.topCenter,  // Start of the gradient
+                              end: Alignment.center, // End of the gradient
+                            ),
+                          ),
+                          child: Center(
+                            child: Column(
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsets.only(top: 10.0),
+                                  child: Text(
+                                    'Get Started Free',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 35),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(height: 20),
-                              SizedBox(
-                                height: 50,
-                                width: 320, // Set a fixed width for the text field
-                                child: TextFormField(
+                                const SizedBox(height:20 ,),
+                                SizedBox(
+                                  height: 55,
+                                  width: 314, // Set a fixed width for the text field
+                                  child: TextField(
                                     onTap: (){
                                       if(_isLoading){
                                         setState(() {
@@ -139,134 +129,162 @@ class _SignUpPageState extends State<SignUpPage> {
                                         });
                                       }
                                     },
-                                  controller: _emailController,
-                                  decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor: Colors.white,
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10.0),
+                                    controller: _nameController,
+                                    decoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: Colors.white,
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10.0),
+                                      ),
+                                      hintText: 'Name',
+                                      hintStyle: const TextStyle(color: Colors.black45),
                                     ),
-                                    hintText: 'Email Address',
-                                    hintStyle: const TextStyle(color: Colors.black45),
-                                  ),
-                                  validator: validateEmail
-                                ),
-                              ),
-                              const SizedBox(height: 20),
-                              SizedBox(
-                                height: 50,
-                                width: 320, // Set a fixed width for the text field
-                                child: TextField(
-                                  onTap: (){
-                                    if(_isLoading){
-                                      setState(() {
-                                        _isLoading = false;
-                                      });
-                                    }
-                                  },
-                                  controller: _passwordController,
-                                  decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor: Colors.white,
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                    hintText: 'Password',
-                                    hintStyle: const TextStyle(color: Colors.black45),
                                   ),
                                 ),
+                                const SizedBox(height: 20),
+                                SizedBox(
+                                  height: 55,
+                                  width: 314,  // Set a fixed width for the text field
+                                  child: TextFormField(
+                                      onTap: (){
+                                        if(_isLoading){
+                                          setState(() {
+                                            _isLoading = false;
+                                          });
+                                        }
+                                      },
+                                    controller: _emailController,
+                                    decoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: Colors.white,
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10.0),
+                                      ),
+                                      hintText: 'Email Address',
+                                      hintStyle: const TextStyle(color: Colors.black45),
+                                    ),
+                                    validator: validateEmail
+                                  ),
+                                ),
+                                const SizedBox(height: 20),
+                                SizedBox(
+                                  height: 55,
+                                  width: 314,  // Set a fixed width for the text field
+                                  child: TextField(
+                                    onTap: (){
+                                      if(_isLoading){
+                                        setState(() {
+                                          _isLoading = false;
+                                        });
+                                      }
+                                    },
+                                    controller: _passwordController,
+                                    decoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: Colors.white,
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10.0),
+                                      ),
+                                      hintText: 'Password',
+                                      hintStyle: const TextStyle(color: Colors.black45),
+                                    ),
+                                  ),
 
-                              ),
-                              const SizedBox(height: 20),
-                              SizedBox(
-                                height: 50,
-                                width: 320, // Set a fixed width for the text field
-                                child: TextFormField(
-                                  onTap: (){
-                                    if(_isLoading){
-                                      setState(() {
-                                        _isLoading = false;
-                                      });
-                                    }
-                                  },
-                                  controller: _confirmPasswordController,
-                                  decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor: Colors.white,
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                const SizedBox(height: 20),
+                                SizedBox(
+                                  height: 55,
+                                  width: 314, // Set a fixed width for the text field
+                                  child: TextFormField(
+                                    onTap: (){
+                                      if(_isLoading){
+                                        setState(() {
+                                          _isLoading = false;
+                                        });
+                                      }
+                                    },
+                                    controller: _confirmPasswordController,
+                                    decoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: Colors.white,
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10.0),
+                                      ),
+                                      hintText: 'Confirm Password',
+                                      hintStyle: const TextStyle(color: Colors.black45),
                                     ),
-                                    hintText: 'Confirm Password',
-                                    hintStyle: const TextStyle(color: Colors.black45),
+                                    validator: (value){
+                                      if(value == null || value.isEmpty){
+                                        return 'Please fill the confirm password field';
+                                      }
+                                      return null;
+                                    },
                                   ),
-                                  validator: (value){
-                                    if(value == null || value.isEmpty){
-                                      return 'Please fill the confirm password field';
+                                ),
+                                const SizedBox(height: 20,),
+                                PrimaryButton(
+                                  text: 'SignUp',
+                                  colors: Colors.purple.shade300,
+                                  textColor: Colors.white,
+                                  onPress: () {
+                                    FocusScope.of(context).unfocus();
+                                    if (_nameController.text.isEmpty ||
+                                        _emailController.text.isEmpty ||
+                                        _passwordController.text.isEmpty ||
+                                        _confirmPasswordController.text.isEmpty) {
+                                      showErrortoast('Please fill all the fields');
                                     }
-                                    return null;
+                                    else if (validateEmail(_emailController.text) != null) {
+                                      showErrortoast(validateEmail(_emailController.text)!);
+                                    }
+                                    else if (_passwordController.text != _confirmPasswordController.text) {
+                                      showErrortoast('Password and confirm password do not match.');
+                                    }
+                                    else {
+                                      if(_isLoading){
+                                        setState(() {
+                                          _isLoading = false;
+                                        });
+                                      }
+                                      else{
+                                        _signUp();
+                                      }
+                                    }
                                   },
                                 ),
-                              ),
-                              const SizedBox(height: 20,),
-                              PrimaryButton(
-                                text: 'SignUp',
-                                colors: Colors.white,
-                                textColor: Colors.black,
-                                onPress: () {
-                                  FocusScope.of(context).unfocus();
-                                  if (_nameController.text.isEmpty ||
-                                      _emailController.text.isEmpty ||
-                                      _passwordController.text.isEmpty ||
-                                      _confirmPasswordController.text.isEmpty) {
-                                    showErrortoast('Please fill all the fields');
-                                  }
-                                  else if (validateEmail(_emailController.text) != null) {
-                                    showErrortoast(validateEmail(_emailController.text)!);
-                                  }
-                                  else if (_passwordController.text != _confirmPasswordController.text) {
-                                    showErrortoast('Password and confirm password do not match.');
-                                  }
-                                  else {
+                                const SizedBox(height: 1),
+                                TextButton(
+                                  onPressed: (){
+                                    FocusScope.of(context).unfocus();
                                     if(_isLoading){
                                       setState(() {
                                         _isLoading = false;
                                       });
                                     }
                                     else{
-                                      _signUp();
+                                      Navigator.pop(context);
                                     }
-                                  }
-                                },
-                              ),
-                              const SizedBox(height: 1),
-                              TextButton(
-                                onPressed: (){
-                                  FocusScope.of(context).unfocus();
-                                  if(_isLoading){
-                                    setState(() {
-                                      _isLoading = false;
-                                    });
-                                  }
-                                  else{
-                                    Navigator.pop(context);
-                                  }
-                                },
-                                child: const Text(
-                                  'Already Registered? SignIn',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top:15.0),
+                                    child: const Text(
+                                      'Already Registered? SignIn',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
+                ],
               ),
             ),
             if (_isLoading)

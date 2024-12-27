@@ -26,6 +26,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
+        backgroundColor: Colors.black87,
         appBar: AppBar(
           title: const Text(
             'Recover Password',
@@ -36,9 +37,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               FocusScope.of(context).unfocus();
               Navigator.pop(context);
             },
-            icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
           ),
-          backgroundColor: Colors.deepPurpleAccent,
+          backgroundColor: Colors.purple.shade400,
           centerTitle: true,
         ),
         body: Stack(
@@ -53,8 +54,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   const SizedBox(height: 20),
                   Center(
                     child: SizedBox(
-                      width: 320,
-                      height: 50,
+                      width: 314,
+                      height: 55,
                       child: TextField(
                         onTap: (){
                           if(_isLoading){
@@ -65,6 +66,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                         },
                         controller: _emailController,
                         decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.white,
                           hintText: 'Enter your email here',
                           hintStyle: const TextStyle(color: Colors.black45),
                           border: OutlineInputBorder(
@@ -77,7 +80,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   const SizedBox(height: 20),
                   PrimaryButton(
                     text: 'Get link',
-                    colors: Colors.deepPurpleAccent,
+                    colors: Colors.purple.shade400,
                     textColor: Colors.white,
                     onPress: () async {
                       FocusScope.of(context).unfocus();

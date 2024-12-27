@@ -17,18 +17,19 @@ class PrimaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 200,
+      width: 314,
+      height: 50,
       child: ElevatedButton(
         onPressed: onPress, // Use the onPress parameter here
         style: ElevatedButton.styleFrom(
           backgroundColor: colors,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(15),
           ),
         ),
         child: Text(
           text,
-          style: TextStyle(color: textColor),
+          style: TextStyle(color: textColor,fontSize: 17),
         ),
       ),
     );

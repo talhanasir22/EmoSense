@@ -1,8 +1,8 @@
-import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:emo_sense/Pages/Face_detect_page.dart';
+import 'package:emo_sense/Pages/note_page.dart';
+import 'package:emo_sense/Pages/signin_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-import '../Custom Widgets/primary_container.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -12,151 +12,224 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  int _currentIndex = 0;
+  // List of pages for navigation
+  final List<Widget> _pages = [
+    FaceDetectPage(),
+    NotePage(), // Notes Page
+  ];
+
+  // Function to show Bottom Sheet (Settings)
+  void _showSettingsBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.grey.shade900,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext context) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.password, color: Colors.white),
+                title: const Text(
+                  'Change Password',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  _showChangePasswordDialog(context);
+                },
+              ),
+              const Divider(color: Colors.white38),
+              ListTile(
+                leading: const Icon(Icons.logout, color: Colors.red),
+                title: const Text(
+                  'Logout',
+                  style: TextStyle(color: Colors.red),
+                ),
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text("Sign Out"),
+                      content: const Text("Are you sure you want to sign out?"),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text("Cancel"),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            FirebaseAuth.instance.signOut();
+                            Navigator.of(context).pop();
+                            Navigator.of(context).pop();
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(builder: (context) => const SignInPage()),
+                                  (route) => false,
+                            );
+                          },
+                          child: const Text("Sign Out"),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  // Function to handle Sign Out
+  void _signOut(BuildContext context) async {
+    await FirebaseAuth.instance.signOut();
+    Navigator.pop(context); // Close Bottom Sheet
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const SignInPage()),
+          (route) => false,
+    );
+  }
+
+  // Function to show Change Password Dialog
+  void _showChangePasswordDialog(BuildContext context) {
+    final TextEditingController _passwordController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Change Password'),
+          content: TextField(
+            controller: _passwordController,
+            obscureText: true,
+            decoration: const InputDecoration(
+              hintText: 'Enter new password',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                try {
+                  await FirebaseAuth.instance.currentUser!
+                      .updatePassword(_passwordController.text);
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Password changed successfully!'),
+                    ),
+                  );
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Error: ${e.toString()}'),
+                    ),
+                  );
+                }
+              },
+              child: const Text('Change'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Dashboard',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
+      backgroundColor: Colors.black87,
+      // appBar: AppBar(
+      //   backgroundColor: Colors.black87,
+      //   centerTitle: true,
+      //   automaticallyImplyLeading: false,
+      //   actions: [
+      //     IconButton(
+      //       icon: const Icon(
+      //         Icons.logout,
+      //         color: Colors.white,
+      //       ),
+      //       onPressed: () {
+      //         showDialog(
+      //           context: context,
+      //           builder: (context) => AlertDialog(
+      //             title: const Text("Sign Out"),
+      //             content: const Text("Are you sure you want to sign out?"),
+      //             actions: [
+      //               TextButton(
+      //                 onPressed: () {
+      //                   Navigator.of(context).pop();
+      //                 },
+      //                 child: const Text("Cancel"),
+      //               ),
+      //               TextButton(
+      //                 onPressed: () {
+      //                   FirebaseAuth.instance.signOut();
+      //                   Navigator.of(context).pop();
+      //                   Navigator.pushAndRemoveUntil(
+      //                     context,
+      //                     MaterialPageRoute(builder: (context) => const SignInPage()),
+      //                         (route) => false,
+      //                   );
+      //                 },
+      //                 child: const Text("Sign Out"),
+      //               ),
+      //             ],
+      //           ),
+      //         );
+      //       },
+      //     ),
+      //   ],
+      // ),
+      body: _currentIndex < _pages.length
+          ? _pages[_currentIndex]
+          : Container(), // Only show pages other than settings
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.purple.shade400,
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white.withOpacity(0.7),
+        currentIndex: _currentIndex,
+        showSelectedLabels: true,
+        showUnselectedLabels: false,
+        elevation: 0,
+        onTap: (index) {
+          if (index == 2) {
+            // If Settings is clicked, show Bottom Sheet
+            _showSettingsBottomSheet(context);
+          } else {
+            setState(() {
+              _currentIndex = index;
+            });
+          }
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
           ),
-        ),
-        backgroundColor: Colors.deepPurpleAccent,
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout,color: Colors.white,),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text("Sign Out"),
-                  content: const Text("Are you sure you want to sign out?"),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text("Cancel"),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        FirebaseAuth.instance.signOut();
-                        Navigator.of(context).pop();
-                        Navigator.pop(context);
-                      },
-                      child: const Text("Sign Out"),
-                    ),
-                  ],
-                ),
-              );
-            },
+          BottomNavigationBarItem(
+            icon: Icon(Icons.note),
+            label: 'Notes',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
           ),
         ],
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(height: 40),
-            AnimatedTextKit(
-              animatedTexts: [
-                TyperAnimatedText(
-                  'Welcome to EmoSense',
-                  textStyle: const TextStyle(
-                    fontSize: 24,
-                    color: Colors.deepPurpleAccent,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  speed: const Duration(milliseconds: 80),
-                ),
-                TyperAnimatedText(
-                  'Detect your emotions instantly',
-                  textStyle: const TextStyle(
-                    fontSize: 20,
-                    color: Colors.deepPurple,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  speed: const Duration(milliseconds: 50),
-                ),
-                TyperAnimatedText(
-                  'Discover mood-based quotes',
-                  textStyle: const TextStyle(
-                    fontSize: 20,
-                    color: Colors.deepPurple,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  speed: const Duration(milliseconds: 50),
-                ),
-                TyperAnimatedText(
-                  'Visualize your emotions with charts',
-                  textStyle: const TextStyle(
-                    fontSize: 20,
-                    color: Colors.deepPurple,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  speed: const Duration(milliseconds: 50),
-                ),
-                TyperAnimatedText(
-                  'Make personal notes anytime',
-                  textStyle: const TextStyle(
-                    fontSize: 20,
-                    color: Colors.deepPurple,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  speed: const Duration(milliseconds: 50),
-                ),
-                TyperAnimatedText(
-                  'Let\'s go',
-                  textStyle: const TextStyle(
-                    fontSize: 24,
-                    color: Colors.deepPurple,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  speed: const Duration(milliseconds: 50),
-                ),
-        
-              ],
-              totalRepeatCount: 1,
-              pause: const Duration(seconds: 2),
-            ),
-            const SizedBox(height: 40),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                PrimaryContainer(
-                  Pagetitle: '',
-                  text: 'Detect',
-                  image: Image.asset('assets/Images/emoji.png'),
-                ),
-                PrimaryContainer(
-                  Pagetitle: '',
-                  text: 'Quotes',
-                  image: Image.asset('assets/Images/quotes.png'),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                PrimaryContainer(
-                  Pagetitle: '',
-                  text: 'Emotion Chart',
-                  image: Image.asset('assets/Images/chart.png'),
-                ),
-                PrimaryContainer(
-                  Pagetitle: '',
-                  text: 'My Notes',
-                  image: Image.asset('assets/Images/Notes.png'),
-                ),
-              ],
-            ),
-          ],
-        ),
       ),
     );
   }

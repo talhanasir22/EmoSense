@@ -1,10 +1,16 @@
+import 'package:camera/camera.dart';
+import 'package:emo_sense/Pages/note_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
 import 'Firebase/firebase_options.dart';
 import 'Pages/splash_page.dart';
 
+List<CameraDescription>? cameras;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  cameras = await availableCameras();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -17,14 +23,19 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'EmoSense',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
-        useMaterial3: true,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context)=>NoteProvider())
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'EmoSense',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
+          useMaterial3: true,
+        ),
+        home: SplashPage(),
       ),
-      home: const SplashPage(),
     );
   }
 }
