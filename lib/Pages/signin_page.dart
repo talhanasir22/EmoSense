@@ -290,8 +290,11 @@ class _SignInPageState extends State<SignInPage> {
       if (user != null) {
         emailController.clear();
         passwordController.clear();
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const MyHomePage()));
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const MyHomePage()),
+              (route) => false,
+        );
       }
     } catch (e) {
       setState(() {

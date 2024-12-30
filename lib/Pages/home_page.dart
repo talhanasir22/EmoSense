@@ -14,13 +14,11 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _currentIndex = 0;
-  // List of pages for navigation
   final List<Widget> _pages = [
     FaceDetectPage(),
     NotePage(), // Notes Page
   ];
 
-  // Function to show Bottom Sheet (Settings)
   void _showSettingsBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -76,7 +74,11 @@ class _MyHomePageState extends State<MyHomePage> {
                             await prefs.remove('isLoggedIn'); // Remove the 'isLoggedIn' flag
 
                             // Close the dialog
-                            Navigator.of(context).pop();
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(builder: (context) => const SignInPage()),
+                                  (route) => false,
+                            );
 
                             // Navigate to the SignInPage and remove all previous routes
                             Navigator.pushAndRemoveUntil(
@@ -151,48 +153,6 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black87,
-      // appBar: AppBar(
-      //   backgroundColor: Colors.black87,
-      //   centerTitle: true,
-      //   automaticallyImplyLeading: false,
-      //   actions: [
-      //     IconButton(
-      //       icon: const Icon(
-      //         Icons.logout,
-      //         color: Colors.white,
-      //       ),
-      //       onPressed: () {
-      //         showDialog(
-      //           context: context,
-      //           builder: (context) => AlertDialog(
-      //             title: const Text("Sign Out"),
-      //             content: const Text("Are you sure you want to sign out?"),
-      //             actions: [
-      //               TextButton(
-      //                 onPressed: () {
-      //                   Navigator.of(context).pop();
-      //                 },
-      //                 child: const Text("Cancel"),
-      //               ),
-      //               TextButton(
-      //                 onPressed: () {
-      //                   FirebaseAuth.instance.signOut();
-      //                   Navigator.of(context).pop();
-      //                   Navigator.pushAndRemoveUntil(
-      //                     context,
-      //                     MaterialPageRoute(builder: (context) => const SignInPage()),
-      //                         (route) => false,
-      //                   );
-      //                 },
-      //                 child: const Text("Sign Out"),
-      //               ),
-      //             ],
-      //           ),
-      //         );
-      //       },
-      //     ),
-      //   ],
-      // ),
       body: _currentIndex < _pages.length
           ? _pages[_currentIndex]
           : Container(), // Only show pages other than settings
