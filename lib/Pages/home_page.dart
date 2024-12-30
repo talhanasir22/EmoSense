@@ -3,6 +3,7 @@ import 'package:emo_sense/Pages/note_page.dart';
 import 'package:emo_sense/Pages/signin_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -51,7 +52,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   'Logout',
                   style: TextStyle(color: Colors.red),
                 ),
-                onTap: () {
+                onTap: () async {
+                  // Show the confirmation dialog
                   showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
@@ -65,10 +67,18 @@ class _MyHomePageState extends State<MyHomePage> {
                           child: const Text("Cancel"),
                         ),
                         TextButton(
-                          onPressed: () {
-                            FirebaseAuth.instance.signOut();
+                          onPressed: () async {
+                            // Sign out from Firebase
+                            await FirebaseAuth.instance.signOut();
+
+                            // Clear the login status in SharedPreferences
+                            SharedPreferences prefs = await SharedPreferences.getInstance();
+                            await prefs.remove('isLoggedIn'); // Remove the 'isLoggedIn' flag
+
+                            // Close the dialog
                             Navigator.of(context).pop();
-                            Navigator.of(context).pop();
+
+                            // Navigate to the SignInPage and remove all previous routes
                             Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(builder: (context) => const SignInPage()),
@@ -81,7 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   );
                 },
-              ),
+              )
             ],
           ),
         );
@@ -89,18 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  // Function to handle Sign Out
-  void _signOut(BuildContext context) async {
-    await FirebaseAuth.instance.signOut();
-    Navigator.pop(context); // Close Bottom Sheet
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => const SignInPage()),
-          (route) => false,
-    );
-  }
 
-  // Function to show Change Password Dialog
   void _showChangePasswordDialog(BuildContext context) {
     final TextEditingController _passwordController = TextEditingController();
 

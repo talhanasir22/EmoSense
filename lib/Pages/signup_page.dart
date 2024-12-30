@@ -59,7 +59,7 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Hide loading indicator on tap anywhere
+        
         if (_isLoading) {
           setState(() {
             _isLoading = false;

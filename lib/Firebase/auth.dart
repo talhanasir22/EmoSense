@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import '../helper.dart';
+
 class Auth{
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -64,12 +66,28 @@ class Auth{
 
   Future<User?> signinwithemail(String email, String password) async {
     try {
+      // Attempt to sign in using FirebaseAuth
       UserCredential credential = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-      return credential.user;
+
+      // Save login state to SharedPreferences
+      await UserPreferences.setLoggedIn(true);
+
+      // Show success toast
+      Fluttertoast.showToast(
+        msg: "Login successful!",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+
+      return credential.user; // Return the authenticated user
     } on FirebaseAuthException catch (e) {
+      // Handle Firebase-specific exceptions
       String errorMessage;
       if (e.code == 'user-not-found') {
         errorMessage = 'No user found for that email.';
@@ -83,7 +101,7 @@ class Auth{
 
       // Show error toast
       Fluttertoast.showToast(
-        msg: 'Incorrect email or Password or check your internet connection',
+        msg: errorMessage,
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         backgroundColor: Colors.red,
@@ -91,11 +109,11 @@ class Auth{
         fontSize: 16.0,
       );
 
-      throw Exception(errorMessage);
+      throw Exception(errorMessage); // Rethrow the error
     } catch (e) {
-      // Show general error toast
+      // Handle general exceptions
       Fluttertoast.showToast(
-        msg: "$e",
+        msg: "An unexpected error occurred: $e",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         backgroundColor: Colors.red,
@@ -103,9 +121,10 @@ class Auth{
         fontSize: 16.0,
       );
 
-      throw Exception('$e');
+      throw Exception('$e'); // Rethrow the error
     }
   }
+
 
   Future<void> recoverPassword(String email) async {
     try {

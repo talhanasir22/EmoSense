@@ -1,14 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-
-import 'note_provider.dart';
 
 class NotePadPage extends StatefulWidget {
-  final String? title;
-  final String? content;
+  final String? noteId;
+  final String? initialTitle;
+  final String? initialContent;
 
-  NotePadPage({this.title, this.content});
+  NotePadPage({this.noteId, this.initialTitle, this.initialContent});
 
   @override
   State<NotePadPage> createState() => _NotePadPageState();
@@ -17,147 +16,104 @@ class NotePadPage extends StatefulWidget {
 class _NotePadPageState extends State<NotePadPage> {
   late TextEditingController titleController;
   late TextEditingController contentController;
-
   FocusNode noteFocusNode = FocusNode();
-  String formattedDateTime = '';
-  bool _isVisible = false;
 
   @override
   void initState() {
     super.initState();
-    // Initialize controllers with passed title and content
-    titleController = TextEditingController(text: widget.title);
-    contentController = TextEditingController(text: widget.content);
-
-    // Format the current date and time
-    formattedDateTime = DateFormat('MM/dd/yyyy, hh:mma').format(DateTime.now());
-
-    // Add listeners to text controllers
-    titleController.addListener(_checkVisibility);
-    contentController.addListener(_checkVisibility);
+    titleController = TextEditingController(text: widget.initialTitle);
+    contentController = TextEditingController(text: widget.initialContent);
   }
 
   @override
   void dispose() {
-    noteFocusNode.dispose();
     titleController.dispose();
     contentController.dispose();
     super.dispose();
   }
 
-  void _checkVisibility() {
-    if (titleController.text.isNotEmpty || contentController.text.isNotEmpty) {
-      setState(() {
-        _isVisible = true;
+  void saveNote() {
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+    final notesRef = FirebaseDatabase.instance.ref().child('users/$uid/notes');
+
+    final title = titleController.text.isNotEmpty ? titleController.text : 'Untitled';
+    final content = contentController.text;
+    final timestamp = DateTime.now().toString();
+
+    if (widget.noteId == null) {
+      // Create new note
+      notesRef.push().set({
+        'title': title,
+        'content': content,
+        'timestamp': timestamp,
       });
     } else {
-      setState(() {
-        _isVisible = false;
+      // Update existing note
+      notesRef.child(widget.noteId!).update({
+        'title': title,
+        'content': content,
+        'timestamp': timestamp,
       });
     }
-  }
 
-  void showSnackBar(BuildContext context, String message) {
-    final snackBar = SnackBar(
-      content: Text(message),
-      duration: const Duration(milliseconds: 600),
-    );
-
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<NoteProvider>(
-      builder: (BuildContext context, NoteProviderModel, child) => Scaffold(
+    return Scaffold(
+      backgroundColor: Colors.black87,
+      appBar: AppBar(
+        actions: [
+          IconButton(
+            onPressed: saveNote,
+            icon: Icon(Icons.done, color: Colors.white),
+          ),
+        ],
         backgroundColor: Colors.black87,
-        appBar: AppBar(
-          actions: [
-            if (_isVisible)
-              IconButton(
-                onPressed: () {
-                  String titleStr = titleController.text.toString();
-                  String contentStr = contentController.text.toString();
-                  NoteProviderModel.addTitle(titleStr);
-                  NoteProviderModel.addContent(contentStr);
-                  titleController.clear();
-                  contentController.clear();
-                  showSnackBar(context, 'Noted Successfully');
-                },
-                icon: Icon(Icons.done, color: Colors.white),
-              ),
-          ],
-          backgroundColor: Colors.black87,
-          leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: Icon(
-              Icons.arrow_back,
-              color: Colors.white,
-            ),
-          ),
-          title: Text(
-            'Notes',
-            style: TextStyle(color: Colors.white),
-          ),
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: Icon(Icons.arrow_back, color: Colors.white),
         ),
-        body: GestureDetector(
-          onTap: () {
-            // Focus on the second TextField when tapping outside
-            noteFocusNode.requestFocus();
-          },
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Title TextField
-                TextField(
-                  controller: titleController,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(borderSide: BorderSide.none),
-                    hintText: 'Title',
-                    hintStyle: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 30,
-                    ),
-                  ),
+        title: Text('Notes', style: TextStyle(color: Colors.white)),
+      ),
+      body: GestureDetector(
+
+        onTap: (){
+          noteFocusNode.requestFocus();
+        },
+
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextField(
+                controller: titleController,
+                style: TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: 'Title',
+                  hintStyle: TextStyle(color: Colors.grey, fontSize: 30),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                  child: Text(
-                    formattedDateTime,
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 10,
-                    ),
-                  ),
+              ),
+              Text(
+                DateTime.now().toString(),
+                style: TextStyle(color: Colors.grey, fontSize: 10),
+              ),
+              TextField(
+                controller: contentController,
+                focusNode: noteFocusNode,
+                maxLines: 100,
+                minLines: 1,
+                style: TextStyle(color: Colors.white, fontSize: 15),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: 'Note something down',
+                  hintStyle: TextStyle(color: Colors.grey, fontSize: 15),
                 ),
-                const SizedBox(height: 10),
-                // Note TextField
-                TextField(
-                  controller: contentController,
-                  focusNode: noteFocusNode,
-                  maxLines: 100,
-                  minLines: 1,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 15,
-                  ),
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(borderSide: BorderSide.none),
-                    hintText: 'Note something down',
-                    hintStyle: TextStyle(color: Colors.grey, fontSize: 15),
-                  ),
-                ),
-                SizedBox(height: double.maxFinite),
-              ],
-            ),
+              ),
+              SizedBox(height: double.maxFinite,)
+            ],
           ),
         ),
       ),
